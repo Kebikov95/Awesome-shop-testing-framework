@@ -62,7 +62,7 @@
                 <version>2.19.1</version>
                 <configuration>
                     <suiteXmlFiles>
-                        <suiteXmlFile>testng-smoke.xml</suiteXmlFile>
+                        <suiteXmlFile>surefire.suiteXmlFiles</suiteXmlFile>
                     </suiteXmlFiles>
                 </configuration>
             </plugin>
