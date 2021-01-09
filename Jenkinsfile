@@ -11,7 +11,7 @@ pipeline {
         stage('Test') {
             steps {
                echo 'This is a minimal pipeline.'
-                sh "mvn browser=${BROWSER} surefire.suiteXmlFiles=${SUREFIRE} clean test"
+                sh "mvn -Dbrowser=${BROWSER} -Dsurefire.suiteXmlFiles=${SUREFIRE} clean test"
             }
         }
     }
