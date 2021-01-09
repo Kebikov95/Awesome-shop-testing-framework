@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    parameters {
+        choice(name: 'BROWSER', choices: ['chrome', 'firefox'], description: '')
+        choice(name: 'SUREFIRE', choices: ['testng-smoke.xml', 'testng-all.xml'], description: '')
+    }
     tools {
         maven '3.6.3'
       }
@@ -7,7 +11,7 @@ pipeline {
         stage('Test') {
             steps {
                echo 'This is a minimal pipeline.'
-               sh "mvn clean test"
+                sh "mvn browser=${BROWSER} surefire.suiteXmlFiles=${SUREFIRE} clean test"
             }
         }
     }
