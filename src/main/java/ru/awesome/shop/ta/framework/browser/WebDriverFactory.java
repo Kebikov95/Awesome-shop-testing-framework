@@ -1,11 +1,17 @@
 package ru.awesome.shop.ta.framework.browser;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import ru.awesome.shop.ta.framework.listeners.WebDriverListener;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import ru.awesome.shop.ta.framework.listeners.WebDriverListener;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
+import ru.awesome.shop.ta.framework.logging.Log;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import static java.lang.String.format;
 
@@ -15,19 +21,32 @@ public final class WebDriverFactory {
         throw new AssertionError(format("Creation of instance of %s is prohibited.", WebDriverFactory.class));
     }
 
-    public static WebDriver getWebDriver(BrowserType type) {
-        WebDriver webDriver;
-        switch (type) {
-            case FIREFOX:
-                WebDriverManager.firefoxdriver().setup();
-                webDriver = new FirefoxDriver();
-                break;
-            case CHROME:
-                WebDriverManager.chromedriver().setup();
-                webDriver = new ChromeDriver();
-                break;
-            default:
-                throw new IllegalArgumentException(format("Unexpected browser type: %s", type));
+    public static WebDriver getWebDriver(BrowserType type, boolean isSeleniumGridEnabled) {
+        WebDriver webDriver = null;
+        try {
+            URL hubUrl = new URL("http:localhost:4444/wd/hub");
+            switch (type) {
+                case FIREFOX:
+                    if (isSeleniumGridEnabled) {
+                        webDriver = new RemoteWebDriver(hubUrl, DesiredCapabilities.firefox());
+                    } else {
+                        WebDriverManager.firefoxdriver().setup();
+                        webDriver = new FirefoxDriver();
+                    }
+                    break;
+                case CHROME:
+                    if (isSeleniumGridEnabled) {
+                        webDriver = new RemoteWebDriver(hubUrl, DesiredCapabilities.chrome());
+                    } else {
+                        WebDriverManager.chromedriver().setup();
+                        webDriver = new ChromeDriver();
+                    }
+                    break;
+                default:
+                    throw new IllegalArgumentException(format("Unexpected browser type: %s", type));
+            }
+        } catch (MalformedURLException e) {
+            Log.error("Malformed URL has occurred", e);
         }
         EventFiringWebDriver eventFiringWebDriver = new EventFiringWebDriver(webDriver);
         eventFiringWebDriver.register(new WebDriverListener());

@@ -1,0 +1,15 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite thread-count="4" name="TestNG" parallel="classes">
+    <listeners>
+        <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener"/>
+    </listeners>
+    <test name="TestNG">
+        <classes>
+            <class name="awesome.shop.tests.ui.LoginTest"/>
+            <class name="awesome.shop.tests.ui.CartTest"/>
+            <class name="awesome.shop.tests.ui.RegistrationTest"/>
+            <class name="awesome.shop.tests.ui.SearchTest"/>
+        </classes>
+    </test>
+</suite>
